@@ -1,0 +1,69 @@
+package com.dl.drawingview.lib.draw.util;
+
+
+import com.dl.drawingview.lib.draw.model.DrawingPoint;
+
+/**
+ * Bezier
+ * AndroidDrawingView <com.vilyever.drawingview.util>
+ * Created by vilyever on 2015/11/13.
+ * Feature:
+ * 贝塞尔曲线计算
+ */
+public class Bezier {
+    final Bezier self = this;
+
+    /* #Constructors */
+    public Bezier(DrawingPoint startPoint, DrawingPoint secondPoint, DrawingPoint endPoint) {
+        this.startPoint = startPoint;
+        this.secondPoint = secondPoint;
+        this.endPoint = endPoint;
+    }
+
+    /* Public Methods */
+    // Bezier曲线长度
+    public float length() {
+        int steps = 10, length = 0;
+        int i;
+        float t;
+        double cx, cy, px = 0, py = 0, xdiff, ydiff;
+
+        for (i = 0; i <= steps; i++) {
+            t = i / steps;
+            cx = Bezier.point(t, this.startPoint.getX(), this.secondPoint.getX(), this.endPoint.getX());
+            cy = Bezier.point(t, this.startPoint.getY(), this.secondPoint.getY(), this.endPoint.getY());
+            if (i > 0) {
+                xdiff = cx - px;
+                ydiff = cy - py;
+                length += Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+            }
+            px = cx;
+            py = cy;
+        }
+        return length;
+    }
+
+    // 二次方贝塞尔曲线
+    // 计算t比例（0<=t<=1)时，曲线由起始点向终点运动的坐标
+    // 分别传入x,y求解
+    public static double point(float t, float start, float second, float end) {
+        return start * (1.0 - t) * (1.0 - t)
+                + 2.0 *  second   * (1.0 - t)  * t
+                +        end      * t          * t;
+    }
+
+//    // 三次方贝塞尔曲线
+//    // 计算t比例（0<=t<=1)时，曲线由起始点向终点运动的坐标
+//    // 分别传入x,y求解
+//    public double points(float t, float start, float second, float third, float end) {
+//        return start * (1.0 - t) * (1.0 - t)  * (1.0 - t)
+//                + 3.0 *  second   * (1.0 - t)  * (1.0 - t)  * t
+//                + 3.0 *  third    * (1.0 - t)  * t          * t
+//                +        end      * t          * t          * t;
+//    }
+
+    /* Properties */
+    public DrawingPoint startPoint;
+    public DrawingPoint secondPoint;
+    public DrawingPoint endPoint;
+}
